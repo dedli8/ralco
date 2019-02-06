@@ -1,0 +1,9 @@
+.goods-item span{
+    width: 15px;
+    height: 15px;
+    background-image: url("../img/arrowlisticon.svg");
+    background-size: cover;
+    display: inline-block;
+    transform: rotate(180deg);
+    margin-right: 10px;
+}
