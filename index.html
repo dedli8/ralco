@@ -9,10 +9,14 @@
     <link type="text/css" rel="stylesheet" href="css/jsgrid-theme.min.css"/>
     <link rel="stylesheet" href="css/all.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="css/select2.min.css" rel="stylesheet" />
+
     <link rel="stylesheet" href="css/styles.css">
+
 
     <script src="js/jquery-3.3.1.slim.min.js"></script>
     <script type="text/javascript" src="js/jsgrid.min.js"></script>
+    <script src="js/select2.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <title>Document</title>
@@ -37,7 +41,62 @@
             </button>
         </div>
     </div>
-    <form class="d-none add-client-form border mt-3 rounded p-3">
+    <div id="info-container"></div>
+</div>
+
+
+<script>
+    $(function () {
+        const money =  `<form class="border rounded p-3 mt-3">
+ <div class="row form-group">
+                    <div class="col-2 align-self-center">
+                    <label class="mb-0" for="inputsum">Сумма:</label>
+                    </div>
+                    <div class="col-10"><input type="text" class="form-control" id="inputsum" placeholder="Сколько денег было получено">
+                    </div>
+                     </div>
+<div class="row form-group">
+                    <div class="col-2 align-self-center">
+                    <label class="mb-0" for="inputdate">Дата:</label>
+                    </div>
+                    <div class="col-10"><input type="date" class="form-control" id="inputdate"
+                placeholder="Укажите дату"></div>
+                    </div>
+
+            <button type="submit" class="save-client-btn btn btn-primary px-4 mx-auto">Сохранить</button>
+            </form>`;
+        const tableInfo = `    <form class="add-client-form border rounded p-3">
+        <div class="row form-group">
+            <div class="col-2 align-self-center">
+                <label class="mb-0" for="inputname">test</label>
+            </div>
+            <div class="col-10"><input type="text" class="form-control" id="inputname"
+                                       placeholder="test"></div>
+        </div>
+        <div class="row form-group">
+            <div class="col-2 align-self-center">
+                <label class="mb-0" for="inputcity">test2</label>
+            </div>
+            <div class="col-10"><input type="text" class="form-control" id="inputcity" placeholder="test2">
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-2 align-self-center">
+                <label class="mb-0" for="inputtel">test3</label>
+            </div>
+            <div class="col-10"><input type="tel" class="form-control" id="inputtel"
+                                       placeholder="test3"></div>
+        </div>
+        <div class="row form-group">
+            <div class="col-2 align-self-center">
+                <label class="mb-0" for="inputEmail">test4</label>
+            </div>
+            <div class="col-10"><input type="email" class="form-control" id="inputEmail" placeholder="test4">
+            </div>
+        </div>
+        <button type="submit" class="save-client-btn btn btn-primary px-4 mx-auto">Сохранить</button>
+    </form>`;
+        const addContactForm = `<form class="add-client-form border mt-3 rounded p-3">
         <h4 class="mb-2">Добавление клиента</h4>
         <div class="row form-group">
             <div class="col-2 align-self-center">
@@ -68,60 +127,31 @@
             </div>
         </div>
         <button type="submit" class="save-client-btn btn btn-primary px-4 mx-auto">Сохранить</button>
-    </form>
-</div>
-
-<script>
-    $(function () {
-        $('.add-client-btn').click(function () {
-            $('.info-container').hide('slow');
-            $('.add-client-form').removeClass('d-none');
-        });
-        $('.save-client-btn').click(function () {
-            $('.add-client-form').addClass('d-none');
-            $('.info-container').show('slow');
-        });
-        $('#client-select').change(function (e) {
-            $('.add-client-form').addClass('d-none');
-            $('.info-container').html('');
-            const infoClient = {};
-            if ($(this).val() == 1) {
-                infoClient.order = "Заказ на сумму 15000";
-                infoClient.study = "Обучение по подключению шлангов";
-                infoClient.advertising = "Реклама новых услуг";
-                infoClient.congratulations = "";
-                infoClient.money = "Получены деньги в размере";
-                infoClient.storecheck = "Котлы";
-            }
-            if ($(this).val() == 2) {
-                infoClient.order = "Заказ на сумму 1000";
-                infoClient.study = "Обучение настройке котлов";
-                infoClient.advertising = "Реклама котлов";
-                infoClient.congratulations = "Компании 20 лет!";
-                infoClient.money = "3000";
-                infoClient.storecheck = "Трубы";
-            }
-            if ($(this).val() != 0 && !$('.buttons-row').length) {
-                const storeCheck =
-                    `<li class="goods-item list-group-item water-heaters"><span></span>Водонагреватели</li>
-        <li class="goods-item list-group-item gas-boilers"><span></span>Котлы газовые</li>
-        <li class="goods-item list-group-item gas-columns"><span></span>Колонки газовые</li>
-        <li class="goods-item list-group-item steel-hardotopes"><span></span>Стальные твердотопы</li>
-        <li class="goods-item list-group-item steel-radiators"><span></span>Стальные радиаторы</li>
-        <li class="goods-item list-group-item electric-boilers"><span></span>Электрокотлы</li>
-        <li class="goods-item list-group-item hoses"><span></span>Шланги</li>
-        <li class="goods-item list-group-item pumps"><span></span>Насосы</li>`;
-                const buttonsRow = ` <div class="row mt-3 buttons-row">
-        <div class="col-2">
+    </form>`;
+        const storeCheck = `<div class="store-check">
+<h4 class="title-info">Стор-чек</h4>
+<ul class="goods-list list-group">
+<li data-goods="water-heaters" class="goods-item list-group-item"><span class="arrow-icon"></span>Водонагреватели</li>
+        <li data-goods="gas-boilers" class="goods-item list-group-item"><span class="arrow-icon"></span>Котлы газовые</li>
+        <li data-goods="gas-columns" class="goods-item list-group-item"><span class="arrow-icon"></span>Колонки газовые</li>
+        <li data-goods="steel-hardotopes" class="goods-item list-group-item"><span class="arrow-icon"></span>Стальные твердотопы</li>
+        <li data-goods="steel-radiators" class="goods-item list-group-item"><span class="arrow-icon"></span>Стальные радиаторы</li>
+        <li data-goods="electric-boilers" class="goods-item list-group-item"><span class="arrow-icon"></span>Электрокотлы</li>
+        <li data-goods="hoses" class="goods-item list-group-item"><span class="arrow-icon"></span>Шланги</li>
+        <li data-goods="pumps" class="goods-item list-group-item"><span class="arrow-icon"></span>Насосы</li></ul>
+</div>`;
+        const buttonsRow = `<div class="row mt-3 buttons-row">
+        <div class="col-2 px-1">
             <button class="btn-secondary btn w-100 order-btn">Заказ</button>
         </div>
-            <div class="col-2"><button class="btn-secondary w-100 btn study-btn">Обучение</button></div>
-            <div class="col-2"><button class="btn-secondary w-100 btn advertising-btn">Реклама</button></div>
-            <div class="col-2"><button class="btn-secondary w-100 btn congratulations-btn">Поздравление</button></div>
-            <div class="col-2"><button class="btn-secondary w-100 btn money-btn">Деньги</button></div>
-            <div class="col-2"><button class="btn-secondary w-100 btn storecheck-btn">Стор-чек</button></div>
+            <div class="col-2 px-1"><button class="btn-secondary w-100 btn study-btn">Обучение</button></div>
+            <div class="col-2 px-1"><button class="btn-secondary w-100 btn advertising-btn">Реклама</button></div>
+            <div class="col-2 px-1"><button class="btn-secondary w-100 btn congratulations-btn">Поздравление</button></div>
+            <div class="col-2 px-1"><button class="btn-secondary w-100 btn money-btn">Деньги</button></div>
+            <div class="col-2 px-1"><button class="btn-secondary w-100 btn store-check-btn">Стор-чек</button></div>
         </div>`;
-                const ordersTable = `<div class="row form-group">
+        const ordersTable = `<div class="border rounded p-3">
+<div class="row form-group">
                     <div class="col-2 align-self-center">
                     <label class="mb-0" for="inputdate">Дата поставки:</label>
                     </div>
@@ -134,120 +164,153 @@
                     </div>
                     <div class="col-10"><input type="text" class="form-control" id="inputaddress" placeholder="Укажите адрес">
                     </div>
+                     </div>
+                    <div id="jsGrid-order" class="mt-3"></div>
                     </div>`;
-
-
-                $('<div />', {"class": 'info-container', html: buttonsRow}).insertAfter(('.choose-client'));
-                $('.storecheck-btn').click(function (e) {
-                    $('.table-info-ralco').remove();
-                    $('.add-client-form').addClass('d-none');
-                    $('.info-group').hide();
-                    $('<h4/>', {text: "Стор-чек", "class": "table-info-ralco"}).insertAfter($('.buttons-row'));
-                    $('<ul/>', {
-                        "class": "goods-list list-group",
-                        html: storeCheck
-                    }).insertAfter($('.table-info-ralco'));
-                    $('.goods-item').click(function (e) {
-                        console.log($(this).children().length > 1);
-                        if ($(this).children().length > 1) {
-                            $(this).children().not('span').remove();
-                            $(this).children('span').css("transform", "rotate(180deg)");
-                        } else {
-                            $(this).children('span').css("transform", "rotate(270deg)");
-                            const lastClass = $(this).attr('class').split(' ').pop();
-                            $('<div/>', {id: `jsGrid-${lastClass}`}).appendTo($(this));
-                            let rowsData = [
-                                {'Название бренда': 'Toshiba', 'Модель': 'g-1908', 'Цена': '12000'},
-                                {'Название бренда': 'Ariston', 'Модель': 'mf-007', 'Цена': '10000'},
-                                {'Название бренда': 'Philips', 'Модель': 'SQ444', 'Цена': '3000'}
-                            ];
-                            $(`#jsGrid-${lastClass}`).jsGrid({
-                                width: "100%",
-                                height: "auto",
-                                inserting: true,
-                                editing: true,
-                                data: rowsData,
-                                fields: [
-                                    {name: "Название бренда", type: "text"},
-                                    {name: "Модель", type: "text", align: "center", width: 100},
-                                    {name: "Цена", type: "text", align: "center", width: 100},
-                                    {type: "control"}
-                                ]
-                            });
-                        }
-
-
-                    });
-
-                });
-                $('.order-btn').click(function (e) {
-                    $('.table-info-ralco').remove();
-                    $('.add-client-form').addClass('d-none');
-                    $('.info-group').hide();
-                    $('<div/>', {
-                        html: ordersTable,
-                        "class": "order-wrap p-3 border rounded mt-3"
-                    }).insertAfter($('.buttons-row'));
-                    $('<div/>', {id: `jsGrid-order`}).insertAfter($('.order-wrap'));
-                    let rowsData = [
-                        {'Наименование': 'Насос', 'Цена': '12000', 'Количество': '100', 'Сумма': '1000'},
-                        {'Наименование': 'Котел', 'Цена': '10000', 'Количество': '200', 'Сумма': '15000'},
-                        {'Наименование': 'Шланг', 'Цена': '3000', 'Количество': '300', 'Сумма': '166000'}
-                    ];
-                    $(`#jsGrid-order`).jsGrid({
-                        width: "100%",
-                        height: "auto",
-                        inserting: true,
-                        editing: true,
-                        data: rowsData,
-                        fields: [
-                            {name: "Наименование", type: "text"},
-                            {name: "Цена", type: "number", align: "center"},
-                            {name: "Количество", type: "number", align: "center"},
-                            {name: "Сумма", type: "number", align: "center"},
-                            {type: "control"}
-                        ]
-                    });
-                });
-                    if ($(this).val() != 0) {
-                        const infoGroup = $('<div/>', {"class": 'row info-group mt-3'}).insertAfter(('.buttons-row'));
-                        for (const [key, value] of Object.entries(infoClient))
-                            if (value != "") {
-                                const infoIcon = `<i class="fas fa-pen text-dark"></i><i class="fas fa-trash text-danger ml-2"></i>`;
-                                let Infoinput = $('<input/>', {
-                                    "class": "info-input form-control col-11 mb-1",
-                                    type: "text",
-                                    readonly: "readonly",
-                                    name: key,
-                                    value: value,
-                                    id: key
-                                });
-                                let InfoLabel = $('<label/>', {
-                                    "class": "info-label col-1 mb-0 pr-0 h5 align-self-center d-flex justify-content-end",
-                                    for: key,
-                                    html: infoIcon
-                                });
-                                infoGroup.append(Infoinput, InfoLabel);
-                            }
-                        $('.fa-pen').click(function (e) {
-                            $(this).parent().prev().removeAttr("readonly");
-                            $('.info-input').blur(function (e) {
-                                $(this).attr('readonly', 'readonly');
-                            })
-                        });
-                        $('.fa-trash').click(function (e) {
-                            $(this).parent().prev().remove();
-                            $(this).parent().remove();
-                        })
-                    }
+        $('.add-client-btn').click(function () {
+$('#info-container').html('').append(addContactForm);
+        });
+        $('.save-client-btn').click(function () {
+            $('#info-container').html('')
+        });
+        $('#client-select').change(function (e) {
+                const infoClient = {};
+                if ($(this).val() == 1) {
+                    infoClient.order = "Заказ на сумму 15000";
+                    infoClient.study = "Обучение по подключению шлангов";
+                    infoClient.advertising = "Реклама новых услуг";
+                    infoClient.congratulations = "";
+                    infoClient.money = "Получены деньги в размере";
+                    infoClient.storecheck = "Котлы";
                 }
-            }
-        )
-        ;
+                if ($(this).val() == 2) {
+                    infoClient.order = "Заказ на сумму 1000";
+                    infoClient.study = "Обучение настройке котлов";
+                    infoClient.advertising = "Реклама котлов";
+                    infoClient.congratulations = "Компании 20 лет!";
+                    infoClient.money = "3000";
+                    infoClient.storecheck = "Трубы";
+                }
+                if ($(this).val() != 0) {
+                    $('#info-container').html(buttonsRow);
+                    $('<div/>', {id: 'info-form', 'class': 'mt-3'}).insertAfter($('.buttons-row'));
+                    const infoGroup = $('<div/>', {"class": 'row info-group mt-3'});
+                    $('#info-form').append(infoGroup);
+                    for (const [key, value] of Object.entries(infoClient))
+                        if (value != "") {
+                            const infoIcon = `<i class="fas fa-pen text-dark"></i><i class="fas fa-trash text-danger ml-2"></i>`;
+                            let Infoinput = $('<input/>', {
+                                "class": "info-input form-control col-11 mb-1",
+                                type: "text",
+                                readonly: "readonly",
+                                name: key,
+                                value: value,
+                                id: key
+                            });
+                            let InfoLabel = $('<label/>', {
+                                "class": "info-label col-1 mb-0 pr-0 h5 align-self-center d-flex justify-content-end",
+                                for: key,
+                                html: infoIcon
+                            });
+                            infoGroup.append(Infoinput, InfoLabel);
+                        }
+                    $('.fa-pen').click(function (e) {
+                        $(this).parent().prev().removeAttr("readonly");
+                        $('.info-input').blur(function (e) {
+                            $(this).attr('readonly', 'readonly');
+                        })
+                    });
+                    $('.fa-trash').click(function (e) {
+                        $(this).parent().prev().remove();
+                        $(this).parent().remove();
+                    });
+                    $('.order-btn').click(function (e) {
+                        $('#info-form').html(ordersTable);
+                        const rowsData = [
+                            {'Наименование': 1, 'Цена': '12000', 'Количество': '100', 'Сумма': '1000'},
+                            {'Наименование': 2, 'Цена': '10000', 'Количество': '200', 'Сумма': '15000'},
+                            {'Наименование': 3, 'Цена': '3000', 'Количество': '300', 'Сумма': '166000'}
+                        ];
+                       const goodsAssortiment = [
+                            { Name: "", Id: 0 },
+                            { Name: "Насос", Id: 1 },
+                            { Name: "Шланг", Id: 2 },
+                            { Name: "Труба", Id: 3 },
+                            { Name: "Котел", Id: 4 }
+                        ];
+                        $(`#jsGrid-order`).jsGrid({
+                            width: "100%",
+                            height: "auto",
+                            inserting: true,
+                            editing: true,
+                            sorting: true,
+                            data: rowsData,
+                            fields: [
+                                { name: "Наименование", type: "select", items: goodsAssortiment, valueField: "Id", textField: "Name", insertTemplate: function() {
+                                                let $result = jsGrid.fields.select.prototype.insertTemplate.call(this);
+                                                setTimeout(()=>{$($result).select2()}, 100) ;
+                                                return $result;
+                                            },
+                                            editTemplate: function(value, item) {
+                                                let $result = jsGrid.fields.select.prototype.editTemplate.call(this, value);
+                                                setTimeout(()=>{$($result).select2()}, 100) ;
+                                                return $result;
 
+                                            } },
+                                {name: "Цена", type: "number", align: "center"},
+                                {name: "Количество", type: "number", align: "center"},
+                                {name: "Сумма", type: "number", align: "center"},
+                                {type: "control"}
+                            ]
 
-    })
-    ;
+                        });
+                    });
+                    $('.study-btn').click(function (e) {
+                        $('#info-form').html(tableInfo);
+                    });
+                    $('.advertising-btn').click(function (e) {
+                        $('#info-form').html(tableInfo);
+                    });
+                    $('.congratulations-btn').click(function (e) {
+                        $('#info-form').html(tableInfo);
+                    });
+                    $('.money-btn').click(function (e) {
+                        $('#info-form').html(money);
+                    });
+                    $('.store-check-btn').click(function (e) {
+                        $('#info-form').html(storeCheck);
+                        $('.arrow-icon').click(function (e) {
+                            const goodsName = $(this).parent().attr('data-goods');
+                            if($(this).parent().children().length >1){
+                                $(this).parent().children().not('.arrow-icon').remove();
+                                $(this).css("transform", "rotate(180deg)");
+                            }else {
+                                $(this).css("transform", "rotate(270deg)");
+                                $('<div/>', {id: `jsGrid-${goodsName}`}).appendTo($(this).parent());
+                                let rowsData = [
+                                    {'Название бренда': 'Toshiba', 'Модель': 'g-1908', 'Цена': '12000'},
+                                    {'Название бренда': 'Ariston', 'Модель': 'mf-007', 'Цена': '10000'},
+                                    {'Название бренда': 'Philips', 'Модель': 'SQ444', 'Цена': '3000'}
+                                ];
+                                $(`#jsGrid-${goodsName}`).jsGrid({
+                                    width: "100%",
+                                    height: "auto",
+                                    inserting: true,
+                                    editing: true,
+                                    data: rowsData,
+                                    fields: [
+                                        {name: "Название бренда", type: "text"},
+                                        {name: "Модель", type: "text", align: "center", width: 100},
+                                        {name: "Цена", type: "text", align: "center", width: 100},
+                                        {type: "control"}
+                                    ]
+                                });
+                            }
+                        });
+                    });
+                    }
+                });
+    });
 </script>
 </body>
 </html>

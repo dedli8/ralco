@@ -1,9 +1,11 @@
-.goods-item span{
+.goods-item .arrow-icon{
+    content: '';
+    display: inline-block;
     width: 15px;
     height: 15px;
     background-image: url("../img/arrowlisticon.svg");
     background-size: cover;
-    display: inline-block;
-    transform: rotate(180deg);
     margin-right: 10px;
+    transform: rotate(180deg);
+    cursor: pointer;
 }
